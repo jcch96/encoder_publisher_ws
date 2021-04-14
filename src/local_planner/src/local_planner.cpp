@@ -200,7 +200,7 @@ public:
 			}
 			else
 			{
-				if (rotate_dir != 0)
+				if (rotate_dir != 0) // if the robot needs to rotate
 				{
 					if (rotate_dir == 1)
 					{
@@ -222,7 +222,9 @@ public:
 				else
 				{
 					if (rotating != 0)
-					{
+					{	
+						ros::Rate rate(1);
+						rate.sleep();
 						stop();
 						rotating = 0;
 						dir = 0;
@@ -233,106 +235,7 @@ public:
 					}
 				}
 			}
-		}
-		/**
-		if (global_path.size() != 0)
-		{	
-			int rotate_dir;
-			if (goal_check(curr_x, curr_y, global_path[1]) == true)
-			{	
-				printf("Reached wp!\n");
-				// check if aligned to goal
-				rotate_dir = align_pose(curr_t, global_path[1]);
-				std::cout << "Rotate Dir: " << rotate_dir << std::endl;
-				if (rotate_dir == 0)
-				{	
-					stop();
-					global_path.erase(global_path.begin());
-
-				}
-				else
-				{
-					if (radius_clear != 1)
-					{
-						sm(curr_x, curr_y); // continue state machine until can rotate
-					}
-					else
-					{
-						if (rotate_dir == 1)
-						{
-							if (rotate_dir != rotating)
-							{
-								rotate_right();
-								rotating = rotate_dir;
-							}
-						}
-						else if (rotate_dir == -1)
-						{
-							if (rotate_dir != rotating)
-							{
-								rotate_left();
-								rotating = rotate_dir;
-							}
-						}
-					}
-				}
-			}
-			else
-			{	
-				// check if aligned to current pose
-				rotate_dir = align_pose(curr_t, global_path[0]);
-				if (rotate_dir != 0)
-				{
-					if (radius_clear != 1)
-					{	
-						if (rotate_dir != rotating)
-						{
-							stop();
-							rotating = rotate_dir;
-						}
-						else
-						{	
-							sm(curr_x, curr_y); // continue state machine until can rotate
-						}
-						//printf("state machine running\n");
-					}
-					else
-					{
-						if (rotate_dir == 1)
-						{
-							if (rotate_dir != rotating)
-							{
-								rotate_right();
-								printf("Rotate Right\n");
-								rotating = rotate_dir;
-							}
-						}
-						else if (rotate_dir == -1)
-						{
-							if (rotate_dir != rotating)
-							{
-								rotate_left();
-								printf("Rotate Left\n");
-								rotating = rotate_dir;
-							}
-						}
-					}
-				}
-				else
-				{	
-					if (rotate_dir != rotating)
-					{
-						stop();
-						rotating = rotate_dir;
-					}
-					else
-					{
-						sm(curr_x, curr_y);
-					}
-					//printf("state machine running\n");
-				}
-			}
-		}**/	
+		}	
 	}
 
 	// Check costmap if clear to move left/right/up/rotate
@@ -435,7 +338,7 @@ public:
 			std::cout << (finished_step == 1) << " " << (up_clear == false) << std::endl;
 			if (prev_state == 1)
 			{
-				if (finished_step == 1)// || up_clear == false)
+				if (finished_step == 1 || up_clear == false)
 				{
 					stop();
 					curr_state = 3;
@@ -619,10 +522,10 @@ public:
 		ts->angular.z = 0;
 		twist_pub.publish(*ts);
 
-		check_steer();
-		ts->angular.y = 0;
-		ts->angular.z = 0;
-		twist_pub.publish(*ts);
+		//check_steer();
+		//ts->angular.y = 0;
+		//ts->angular.z = 0;
+		//twist_pub.publish(*ts);
 	}
 
 	void rotate_right()
