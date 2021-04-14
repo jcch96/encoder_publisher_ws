@@ -159,7 +159,6 @@ public:
 				lf_stat.call(lf_req);
 				rf_stat.call(rf_req);
 				signal = ((bool)lb_req.response.status && (bool)lf_req.response.status && (bool)rb_req.response.status && (bool)rf_req.response.status);
-				//std::cout << "Signal: " << signal << std::endl;
 				rate.sleep();
 				if (signal==true)
 				{
@@ -251,9 +250,8 @@ public:
 	// align robot when at start of goal and at end of each horizontal movement
 	int align_pose(double current, geometry_msgs::PoseStamped goal)
 	{	
-		//double diff = (current - quat_to_rad(goal, "rad"))/PI*180;
 		double diff = angle_diff(current, quat_to_rad(goal, "rad"), "deg");
-		std::cout << "Angle diff: " << diff << std::endl;
+		//std::cout << "Angle diff: " << diff << std::endl;
 		if (std::round(diff) >= pose_tolerance)
 		{
 			return 1;
@@ -272,6 +270,7 @@ public:
 	{	
 		double dist = sqrt(pow(x-start_x,2) + pow(y-start_y, 2));
 		std::cout << dist << " | " << step << std::endl;
+
 		// check if robot has reached forward/horizontal limit
 		if (dist <= step)
 		{
@@ -283,6 +282,7 @@ public:
 		}
 		std::cout << (finished_step == true) << std::endl;
 		std::cout << curr_state << " " << prev_state << std::endl;
+
 		// moving right
 		if (curr_state == 1)
 		{	
@@ -290,7 +290,6 @@ public:
 			{
 				if (right_clear == 0 || finished_step == true)
 				{	
-					//printf("checking\n");
 					stop();
 					start_x = x;
 					start_y = y;
@@ -299,16 +298,12 @@ public:
 					prev_state = 1;
 					up();
 					dir = curr_state;
-					//printf("check1\n");
 				}
 				else
 				{	
-					//printf("check3\n");
 					if (dir!=curr_state)
 					{	
-						//printf("check4\n");
 						right();
-						//printf("check2\n");
 						dir = curr_state;
 					}
 				}
