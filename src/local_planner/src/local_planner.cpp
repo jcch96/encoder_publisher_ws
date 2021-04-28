@@ -254,11 +254,11 @@ public:
 		//std::cout << "Angle diff: " << diff << std::endl;
 		if (std::round(diff) >= pose_tolerance)
 		{
-			return 1;
+			return 1; // rotate right, cw
 		}
 		else if (std::round(diff) <= -pose_tolerance)
 		{
-			return -1;
+			return -1;  // rotate left, ccw
 		}
 		else
 		{

@@ -1,8 +1,8 @@
-# Install script for directory: /home/joel/encoder_publisher_ws/src/can_encoder_pub
+# Install script for directory: /home/joel/Desktop/encoder_publisher_ws/src/can_encoder_pub
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/joel/encoder_publisher_ws/install")
+  set(CMAKE_INSTALL_PREFIX "/home/joel/Desktop/encoder_publisher_ws/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -38,17 +38,17 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/joel/encoder_publisher_ws/build/can_encoder_pub/catkin_generated/installspace/can_encoder_pub.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/joel/Desktop/encoder_publisher_ws/build/can_encoder_pub/catkin_generated/installspace/can_encoder_pub.pc")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/can_encoder_pub/cmake" TYPE FILE FILES
-    "/home/joel/encoder_publisher_ws/build/can_encoder_pub/catkin_generated/installspace/can_encoder_pubConfig.cmake"
-    "/home/joel/encoder_publisher_ws/build/can_encoder_pub/catkin_generated/installspace/can_encoder_pubConfig-version.cmake"
+    "/home/joel/Desktop/encoder_publisher_ws/build/can_encoder_pub/catkin_generated/installspace/can_encoder_pubConfig.cmake"
+    "/home/joel/Desktop/encoder_publisher_ws/build/can_encoder_pub/catkin_generated/installspace/can_encoder_pubConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/can_encoder_pub" TYPE FILE FILES "/home/joel/encoder_publisher_ws/src/can_encoder_pub/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/can_encoder_pub" TYPE FILE FILES "/home/joel/Desktop/encoder_publisher_ws/src/can_encoder_pub/package.xml")
 endif()
 

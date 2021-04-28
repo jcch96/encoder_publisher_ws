@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/joel/encoder_publisher_ws/src
+CMAKE_SOURCE_DIR = /home/joel/Desktop/encoder_publisher_ws/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/joel/encoder_publisher_ws/build
+CMAKE_BINARY_DIR = /home/joel/Desktop/encoder_publisher_ws/build
 
 # Include any dependencies generated for this target.
 include local_planner/CMakeFiles/costmap_clear_node.dir/depend.make
@@ -58,17 +58,17 @@ include local_planner/CMakeFiles/costmap_clear_node.dir/progress.make
 include local_planner/CMakeFiles/costmap_clear_node.dir/flags.make
 
 local_planner/CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.o: local_planner/CMakeFiles/costmap_clear_node.dir/flags.make
-local_planner/CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.o: /home/joel/encoder_publisher_ws/src/local_planner/src/costmap_clear.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/joel/encoder_publisher_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object local_planner/CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.o"
-	cd /home/joel/encoder_publisher_ws/build/local_planner && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.o -c /home/joel/encoder_publisher_ws/src/local_planner/src/costmap_clear.cpp
+local_planner/CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.o: /home/joel/Desktop/encoder_publisher_ws/src/local_planner/src/costmap_clear.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/joel/Desktop/encoder_publisher_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object local_planner/CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.o"
+	cd /home/joel/Desktop/encoder_publisher_ws/build/local_planner && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.o -c /home/joel/Desktop/encoder_publisher_ws/src/local_planner/src/costmap_clear.cpp
 
 local_planner/CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.i"
-	cd /home/joel/encoder_publisher_ws/build/local_planner && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/joel/encoder_publisher_ws/src/local_planner/src/costmap_clear.cpp > CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.i
+	cd /home/joel/Desktop/encoder_publisher_ws/build/local_planner && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/joel/Desktop/encoder_publisher_ws/src/local_planner/src/costmap_clear.cpp > CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.i
 
 local_planner/CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.s"
-	cd /home/joel/encoder_publisher_ws/build/local_planner && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/joel/encoder_publisher_ws/src/local_planner/src/costmap_clear.cpp -o CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.s
+	cd /home/joel/Desktop/encoder_publisher_ws/build/local_planner && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/joel/Desktop/encoder_publisher_ws/src/local_planner/src/costmap_clear.cpp -o CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.s
 
 local_planner/CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.o.requires:
 
@@ -88,32 +88,32 @@ costmap_clear_node_OBJECTS = \
 # External object files for target costmap_clear_node
 costmap_clear_node_EXTERNAL_OBJECTS =
 
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: local_planner/CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.o
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: local_planner/CMakeFiles/costmap_clear_node.dir/build.make
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/libroscpp.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libboost_filesystem.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/librosconsole.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/librosconsole_log4cxx.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/librosconsole_backend_interface.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/liblog4cxx.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libboost_regex.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/libxmlrpcpp.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/libroscpp_serialization.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/librostime.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/libcpp_common.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libboost_system.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libboost_thread.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libboost_chrono.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libboost_date_time.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libboost_atomic.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libpthread.so
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libconsole_bridge.so.0.4
-/home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: local_planner/CMakeFiles/costmap_clear_node.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/joel/encoder_publisher_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable /home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node"
-	cd /home/joel/encoder_publisher_ws/build/local_planner && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/costmap_clear_node.dir/link.txt --verbose=$(VERBOSE)
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: local_planner/CMakeFiles/costmap_clear_node.dir/src/costmap_clear.cpp.o
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: local_planner/CMakeFiles/costmap_clear_node.dir/build.make
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/libroscpp.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libboost_filesystem.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/librosconsole.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/librosconsole_log4cxx.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/librosconsole_backend_interface.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/liblog4cxx.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libboost_regex.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/libxmlrpcpp.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/libroscpp_serialization.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/librostime.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /opt/ros/melodic/lib/libcpp_common.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libboost_system.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libboost_thread.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libboost_chrono.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libboost_date_time.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libboost_atomic.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libpthread.so
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: /usr/lib/x86_64-linux-gnu/libconsole_bridge.so.0.4
+/home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node: local_planner/CMakeFiles/costmap_clear_node.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/joel/Desktop/encoder_publisher_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable /home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node"
+	cd /home/joel/Desktop/encoder_publisher_ws/build/local_planner && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/costmap_clear_node.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
-local_planner/CMakeFiles/costmap_clear_node.dir/build: /home/joel/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node
+local_planner/CMakeFiles/costmap_clear_node.dir/build: /home/joel/Desktop/encoder_publisher_ws/devel/lib/local_planner/costmap_clear_node
 
 .PHONY : local_planner/CMakeFiles/costmap_clear_node.dir/build
 
@@ -122,10 +122,10 @@ local_planner/CMakeFiles/costmap_clear_node.dir/requires: local_planner/CMakeFil
 .PHONY : local_planner/CMakeFiles/costmap_clear_node.dir/requires
 
 local_planner/CMakeFiles/costmap_clear_node.dir/clean:
-	cd /home/joel/encoder_publisher_ws/build/local_planner && $(CMAKE_COMMAND) -P CMakeFiles/costmap_clear_node.dir/cmake_clean.cmake
+	cd /home/joel/Desktop/encoder_publisher_ws/build/local_planner && $(CMAKE_COMMAND) -P CMakeFiles/costmap_clear_node.dir/cmake_clean.cmake
 .PHONY : local_planner/CMakeFiles/costmap_clear_node.dir/clean
 
 local_planner/CMakeFiles/costmap_clear_node.dir/depend:
-	cd /home/joel/encoder_publisher_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/joel/encoder_publisher_ws/src /home/joel/encoder_publisher_ws/src/local_planner /home/joel/encoder_publisher_ws/build /home/joel/encoder_publisher_ws/build/local_planner /home/joel/encoder_publisher_ws/build/local_planner/CMakeFiles/costmap_clear_node.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/joel/Desktop/encoder_publisher_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/joel/Desktop/encoder_publisher_ws/src /home/joel/Desktop/encoder_publisher_ws/src/local_planner /home/joel/Desktop/encoder_publisher_ws/build /home/joel/Desktop/encoder_publisher_ws/build/local_planner /home/joel/Desktop/encoder_publisher_ws/build/local_planner/CMakeFiles/costmap_clear_node.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : local_planner/CMakeFiles/costmap_clear_node.dir/depend
 
