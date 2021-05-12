@@ -325,6 +325,13 @@ public:
 				step = forward_limit;
 				curr_state = 2;
 				prev_state = 1;
+
+				if (up_clear == 0)
+				{
+					curr_state = 3;
+					prev_state = 1;
+					step = horizontal_limit;
+				}
 			}
 			else if (right_clear == true && finished_step == false)
 			{	
@@ -334,12 +341,7 @@ public:
 					dir = curr_state;
 				}
 			}
-			else
-			{
-				stop();
-			}
-			//}
-			/**
+			
 			else if (prev_state == 3)
 			{
 				if (up_clear == 1 || finished_step == true)
@@ -355,8 +357,21 @@ public:
 				{
 					stop();
 				}
+				else if (right_clear == true && finished_step == false)
+				{	
+					if (dir!=curr_state)
+					{	
+						right();
+						dir = curr_state;
+					}
+				}
 			}
-			**/
+
+			else
+			{
+				stop();
+			}
+			
 		}
 		// moving up
 		else if (curr_state == 2)
@@ -419,6 +434,13 @@ public:
 				step = forward_limit;
 				curr_state = 2;
 				prev_state = 3;
+
+				if (up_clear == 0)
+				{
+					curr_state = 1;
+					prev_state = 3;
+					step = horizontal_limit;
+				}
 			}
 			else if (left_clear == true && finished_step == false)
 			{
@@ -428,12 +450,6 @@ public:
 					dir = curr_state;
 				}
 			}
-			else
-			{
-				stop();
-			}
-			//}
-			/**
 			else if (prev_state == 1)
 			{
 				if (up_clear == 1 || finished_step == true)
@@ -449,16 +465,19 @@ public:
 				{
 					stop();
 				}
-				else if (left_clear == true)
-				{
+				else if (left_clear == true && finished_step == false)
+				{	
 					if (dir!=curr_state)
-					{
+					{	
 						left();
 						dir = curr_state;
 					}
 				}
+				else
+				{
+					stop();
+				}
 			}
-			**/
 		}
 	}
 
