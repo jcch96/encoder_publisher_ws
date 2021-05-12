@@ -41,7 +41,7 @@ private:
 	geometry_msgs::Twist twist_msg;
 
 	// speed
-	float vx = 0.085;
+	float vx = 0.12;
 	float wz = 0.05;
 	int rotating; // check if robot is already rotating
 
@@ -83,10 +83,10 @@ public:
 		lf_stat = nh->serviceClient<panthera_locomotion::Status>("lf_steer_status");
 		rf_stat = nh->serviceClient<panthera_locomotion::Status>("rf_steer_status");
 		
-		lb_stat.waitForExistence();
-		rb_stat.waitForExistence();
-		lf_stat.waitForExistence();
-		rf_stat.waitForExistence();
+		//lb_stat.waitForExistence();
+		//rb_stat.waitForExistence();
+		//lf_stat.waitForExistence();
+		//rf_stat.waitForExistence();
 		
 		length = nh->param("/robot_length", 1.5);
 		goal_stop = nh->param("/goal_stop", 0.5);
@@ -187,7 +187,7 @@ public:
 		{
 			start_x = curr_x;
 			start_y = curr_y;
-			step=forward_limit;
+			step=horizontal_limit;
 			n++;
 		}
 		int aligned;
@@ -238,7 +238,8 @@ public:
 				else
 				{
 					if (rotating != 0)
-					{
+					{	
+						ros::Duration(1.0).sleep();
 						stop();
 						rotating = 0;
 						dir = 0;
@@ -276,7 +277,7 @@ public:
 		{
 			return -1;
 		}
-		else
+		else 
 		{
 			return 0;
 		}
