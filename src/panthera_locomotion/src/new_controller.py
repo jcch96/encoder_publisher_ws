@@ -7,7 +7,6 @@ from std_msgs.msg import Empty
 from panthera_locomotion.srv import Status, StatusRequest, StatusResponse
 from ds4_driver.msg import Status as st
 from ds4_driver.msg import Feedback
-from zed_interfaces.msg import ObjectsStamped
 
 class Ds4Controller():
 	def __init__(self):
@@ -26,7 +25,7 @@ class Ds4Controller():
 		rospy.Subscriber('/can_encoder', Twist, self.encoder_pos)
 
 		### VISION ###
-		rospy.Subscriber('/zed2/zed_node/obj_det/objects', ObjectsStamped, self.human_loc)
+		#rospy.Subscriber('/zed2/zed_node/obj_det/objects', ObjectsStamped, self.human_loc)
 		self.human_dist = float('inf')
 		self.human_stop = 1.5
 		##############
@@ -77,7 +76,11 @@ class Ds4Controller():
 		self.rec_r = 0
 		self.rec_l = 0
 
-		self.d_vx = 0
+		self.d_vx = 0### VISION ###
+		#rospy.Subscriber('/zed2/zed_node/obj_det/objects', ObjectsStamped, self.human_loc)
+		self.human_dist = float('inf')
+		self.human_stop = 1.5
+		##############
 		self.d_wz = 0
 		self.decrease = 0
 
@@ -99,17 +102,6 @@ class Ds4Controller():
 		self.vb.set_rumble = True
 		self.vb.rumble_duration = 0.5
 		self.vb.rumble_small = 0.5
-
-	def human_loc(self, data):
-		if self.vision.data == 1:
-			nearest_human = float('inf')
-			for person in data.objects:
-				if person.position[0] <= nearest_human:
-					nearest_human = person.position[0]
-			self.human_dist = nearest_human
-		else:
-			self.human_dist = float('inf')
-		#print(self.human_dist)
 
 	def custom_twist(self, val1, val2):
 		ts = Twist()
