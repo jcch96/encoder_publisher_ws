@@ -1,3 +1,9 @@
+Download Workspace:
+-------------------
+1. git clone https://github.com/jcch96/encoder_publisher_ws.git
+2. git checkout teleop
+3. git status (optional check make sure in "teleop" branch)
+
 Set up workspace:
 -----------------
 1. navigate to /encoder_publisher_ws
