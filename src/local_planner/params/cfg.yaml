@@ -1,12 +1,12 @@
 robot_length: 2.1
-robot_width: 1.0
-safety_dist: 0.1
+robot_width: 1.2
+safety_dist: 0.3
 clear_tolerance: 5
 clear_radius: 1.1
 
 # limits
 forward_limit: 1.0
-horizontal_limit: 2.2
+horizontal_limit: 3.0
 
 # goal path
 delta_theta: 20 # degrees
