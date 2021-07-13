@@ -13,6 +13,7 @@
 #include <cmath>
 #include <local_planner/icr_utils.h>
 #include <panthera_locomotion/Status.h>
+#include <panthera_locomotion/ICRsearch.h>
 
 class Robot
 {
@@ -29,6 +30,7 @@ class Robot
 		ros::Publisher vel_pub;
 
 		ros::ServiceClient lb_stat, rb_stat, lf_stat, rf_stat;
+		ros::ServiceServer icr_angle;
 
 		bool operation;
 
@@ -64,6 +66,7 @@ class Robot
 		// cmd vel
 		geometry_msgs::Twist cmd_angle;
 		geometry_msgs::Twist cmd_vel;
+		bool feasibility;
 		float wz = 0.07;
 
 	public:
@@ -94,6 +97,8 @@ class Robot
 			rb_stat = nh->serviceClient<panthera_locomotion::Status>("rb_steer_status");
 			lf_stat = nh->serviceClient<panthera_locomotion::Status>("lf_steer_status");
 			rf_stat = nh->serviceClient<panthera_locomotion::Status>("rf_steer_status");
+
+			icr_angle = nh->advertiseService("rotation_angle", &Robot::calculate_rotation, this);
 		}
 
 		struct ICR
@@ -128,8 +133,8 @@ class Robot
 				ts->linear.z = 0;//double_dist(wheel_vec[2].x, wheel_vec[2].y, icr.x, icr.y) * (abs(angle)/angle) * wz;
 				ts->angular.x = 0;//double_dist(wheel_vec[3].x, wheel_vec[3].y, icr.x, icr.y) * (abs(angle)/angle) * wz;
 			}
-			std::cout << *ts << std::endl;
-			vel_pub.publish(*ts);
+			//std::cout << *ts << std::endl;
+			//vel_pub.publish(*ts);
 
 		}
 
@@ -140,7 +145,7 @@ class Robot
 			ts->linear.y = icr.wheel_angles[1]*180/PI;
 			ts->linear.z = icr.wheel_angles[2]*180/PI;
 			ts->angular.x = icr.wheel_angles[3]*180/PI;
-			angle_pub.publish(*ts);
+			//angle_pub.publish(*ts);
 		}
 
 		void stop_pub()
@@ -321,7 +326,7 @@ class Robot
 			}
 		}
 
-		void run()
+		void run(double des_angle)
 		{	
 			geometry_msgs::Point32 current_pt = footprint_points[(int)(footprint_points.size()/2)]; // init middle point to start search
 			geometry_msgs::Point32 found_pt;
@@ -329,7 +334,7 @@ class Robot
 
 			bool first_point_found;
 
-			first_point_found = rotation_clear(current_pt, angle, data_pts);
+			first_point_found = rotation_clear(current_pt, des_angle, data_pts);
 			std::vector<geometry_msgs::Point32> neighbours;
 			get_neighbours(current_pt, &neighbours);
 
@@ -337,7 +342,7 @@ class Robot
 			// searching for first point
 			while (first_point_found == false)
 			{
-				bool first_point_found = rotation_clear(current_pt, angle, data_pts);
+				bool first_point_found = rotation_clear(current_pt, des_angle, data_pts);
 				if (first_point_found == false)
 				{
 					get_neighbours(current_pt, &neighbours);
@@ -349,6 +354,7 @@ class Robot
 						std::cout << "Final pt: " << current_pt << std::endl;
 						std::cout << "No possible icr" << std::endl;
 						neighbours.clear();
+						feasibility = false;
 						break;
 					}
 				}
@@ -372,12 +378,6 @@ class Robot
 				{	
 					std::cout << "Current pt: " << current_pt << std::endl;
 					get_neighbours(current_pt, &neighbours);
-					/**
-					for (auto i : neighbours)
-					{	
-						std::cout <<"neightbour "<< i << std::endl;
-					}
-					**/
 					found_pt = best_point(current_pt, &neighbours,  &best_found_point);
 					if (current_pt == best_found_point.coordinates)
 					{	
@@ -388,6 +388,9 @@ class Robot
 						std::cout << "h4: " << best_found_point.h4 << std::endl;
 						std::cout << "Iterations: " << it << std::endl;
 						std::cout << "Completed search: " << found_pt << std::endl;
+						publish_vel(best_found_point.coordinates, wheels);
+						publish_angle(best_found_point);
+						feasibility = true;
 						break;
 					}
 					else
@@ -513,13 +516,14 @@ class Robot
 				n += 1;
 			}
 			data_pts = msg.data;
+
 			if (received_angle == true)
 			{
 				//test_run();
 				//run();
 				if (gradient_descent == true)
 				{
-					run();
+					run(angle);
 				}
 				else
 				{
@@ -527,6 +531,15 @@ class Robot
 				}
 				received_angle = false;
 			}
+		}
+
+		bool calculate_rotation(panthera_locomotion::ICRsearch::Request& req, panthera_locomotion::ICRsearch::Response& res)
+		{
+			run(req.turn_angle);
+			res.feasibility = feasibility;
+			res.wheel_angles = cmd_angle;
+			res.wheel_speeds = cmd_vel;
+			return true;
 		}
 
 		void cornerPoints()
