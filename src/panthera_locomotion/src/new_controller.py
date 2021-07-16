@@ -184,7 +184,7 @@ class Ds4Controller():
 		req = StatusRequest()
 		req.reconfig = True
 		signal = False
-		rate = rospy.Rate(2)
+		rate = rospy.Rate(1)
 		while signal == False and not rospy.is_shutdown():
 			rate.sleep()
 			lb = self.lb_status(req)
@@ -272,7 +272,7 @@ class Ds4Controller():
 		self.twist.linear.z = self.filter_input(lf - h_r - h_l + recon_l)
 		self.twist.angular.x = self.filter_input(rf - h_r - h_l + recon_r)
 		self.pub.publish(self.twist)
-
+		#print(self.mode, prev_mode)
 		# check wheels aligned
 		if self.mode != 0:
 			if prev_mode == 0:
@@ -280,15 +280,20 @@ class Ds4Controller():
 				self.twist.angular.z = 0
 				self.pub.publish(self.twist)
 				self.check()
-			else:
-				pass
-		else:
-			if prev_mode == 1:
-				self.check()
-			else:
+			elif self.rec_l == 1 or self.rec_r == 1 or self.holo_left == 1 or self.holo_right == 1:
 				self.twist.angular.y = 0
 				self.twist.angular.z = 0
 				self.pub.publish(self.twist)
+				self.check()
+		else:
+			if prev_mode == 1:
+				#print("Stopping")
+				self.twist.angular.y = 0
+				self.twist.angular.z = 0
+				self.pub.publish(self.twist)
+				self.check()
+			else:
+				#print("Not stopping")
 				self.check()
 
 		# wheel speeds for reconfig
