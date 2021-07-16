@@ -283,8 +283,13 @@ class Ds4Controller():
 			else:
 				pass
 		else:
-			self.check()
-			pass
+			if prev_mode == 1:
+				self.check()
+			else:
+				self.twist.angular.y = 0
+				self.twist.angular.z = 0
+				self.pub.publish(self.twist)
+				self.check()
 
 		# wheel speeds for reconfig
 		self.reconfiguring.linear.x = self.rec_l * recon_move
@@ -302,7 +307,7 @@ class Ds4Controller():
 				self.reconfiguring.linear.x = 0
 				self.reconfiguring.linear.z = 0
 
-		else if self.width >= self.expand_limit:
+		elif self.width >= self.expand_limit:
 			if self.reconfiguring.linear.y <= 0 or self.reconfiguring.angular.x <= 0:
 				self.reconfiguring.linear.y = 0
 				self.reconfiguring.angular.x = 0
