@@ -47,6 +47,19 @@ cd encoder_publisher_ws
 source devel/setup.bash
 roslaunch panthera_locomotion ds4controller.launch
 
+6th Terminal: (Optional for brushes/vacuum/actuators)
+-------------
+sudo chmod 777 /dev/tty*
+cd encoder_publisher_ws
+source devel/setup.bash
+roslaunch roboclaw_node panthera.launch
+
+## if error for roboclaw node, change exchange the numbers for ttyACM_
+<arg name="dev0" default="/dev/ttyACM0"/>
+<arg name="dev1" default="/dev/ttyACM1"/>
+<arg name="dev2" default="/dev/ttyACM2"/>
+
+found in encoder_publisher_ws/src/roboclaw_node/launch/panthera.launch
 
 
 ### WARNINGS ###
