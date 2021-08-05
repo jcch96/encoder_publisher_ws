@@ -2,6 +2,7 @@
 
 import math
 import rospy
+import paho.mqtt.client as mqtt
 from geometry_msgs.msg import Twist, Point32
 from std_msgs.msg import Empty
 from panthera_locomotion.srv import Status, StatusRequest, StatusResponse

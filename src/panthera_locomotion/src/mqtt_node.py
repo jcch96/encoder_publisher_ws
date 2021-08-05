@@ -6,12 +6,6 @@ from ds4_driver.msg import Status
 
 class MqttNode():
 	def __init_(self):
-		rospy.init_node("mqtt_client")
-		rospy.Subscriber("/cmd_vel", Twist, self.cmd_sub)
-		rospy.Subscriber("/status", Status, self.ds4_sub)
-		self.broker_address = "192.168.1.93"
-		self.client = mqtt.Client("P1")
-		self.client.connect(self.broker_address)
 
 		self.linear_x = 0
 		self.angular_z = 0
@@ -34,6 +28,11 @@ class MqttNode():
 		self.brush_value = 0
 		self.act_value = 0
 		self.vac_value = 0
+		self.broker_address = "192.168.1.93"
+		self.client = mqtt.Client("P1")
+		self.client.connect(self.broker_address)
+		rospy.Subscriber("/cmd_vel", Twist, self.cmd_sub)
+		rospy.Subscriber("/status", Status, self.ds4_sub)
 
 	def cmd_sub(self, data):
 		self.linear_x = data.linear.x
@@ -61,12 +60,16 @@ class MqttNode():
 		self.act_value = data.button_square
 		self.vac_value = data.button_circle
 		###
+		rate = rospy.Rate(10)
+		while not rospy.is_shutdown():
+			start.run()
+			rate.sleep()
 
 	def run(self):
 		msg = "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(self.linear_x, self,angular_z, self.rot_right, self.rot_left, self.vision_value,
 																	self.holo_right, self.holo_left, self.rec_r, self.rec_l, self.d_vx, self.d_wz,
 																	self.decrease, self.brush_value, self.act_value, self.vac_value)
-		client.publish("cmd_vel", msg)
+		self.client.publish("cmd_vel", msg)
 		self.print_instructions()
 
 	def print_instructions(self):
@@ -104,10 +107,7 @@ class MqttNode():
 		print("[circle]: Vacuum -> " + str(self.vac_data))
 
 if __name__=="__main__":
+	rospy.init_node("mqtt_client")
 	start = MqttNode()
-	rate = rospy.Rate(10)
-	while not rospy.is_shutdown():
-		start.run()
-		rate.sleep()
 
 
