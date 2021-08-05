@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   tf_conversions
   tf2_ros
+  serial
 )
 
 ## System dependencies are found with CMake's conventions
@@ -63,8 +64,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
-	Status.srv
-	ICRsearch.srv
+  Status.srv
+  ICRsearch.srv
 )
 
 ## Generate actions in the 'action' folder
@@ -123,7 +124,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  #include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -142,6 +143,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/panthera_locomotion_node.cpp)
 add_executable(panthera_twist_node src/panthera_twist.cpp)
+#add_executable(roboteq src/test_motor.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -153,11 +155,16 @@ add_executable(panthera_twist_node src/panthera_twist.cpp)
 ## same as for the library above
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(panthera_twist_node ${panthera_twist_node_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(roboteq ${panthera_twist_node_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(panthera_twist_node
   ${catkin_LIBRARIES}
 )
+
+#target_link_libraries(roboteq
+#  ${catkin_LIBRARIES}
+#)
 
 #############
 ## Install ##

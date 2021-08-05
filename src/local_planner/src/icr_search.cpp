@@ -14,6 +14,7 @@
 #include <local_planner/icr_utils.h>
 #include <panthera_locomotion/Status.h>
 #include <panthera_locomotion/ICRsearch.h>
+#include <stdlib.h>
 
 class Robot
 {
@@ -328,7 +329,8 @@ class Robot
 
 		void run(double des_angle)
 		{	
-			geometry_msgs::Point32 current_pt = footprint_points[(int)(footprint_points.size()/2)]; // init middle point to start search
+			int rand_num = rand() % footprint_points.size();
+			geometry_msgs::Point32 current_pt = footprint_points[rand_num]; // init middle point to start search
 			geometry_msgs::Point32 found_pt;
 			ICR best_found_point;
 
@@ -388,6 +390,7 @@ class Robot
 						std::cout << "h4: " << best_found_point.h4 << std::endl;
 						std::cout << "Iterations: " << it << std::endl;
 						std::cout << "Completed search: " << found_pt << std::endl;
+						std::cout << "Index: " << rand_num << std::endl;
 						publish_vel(best_found_point.coordinates, wheels);
 						publish_angle(best_found_point);
 						feasibility = true;
@@ -405,6 +408,7 @@ class Robot
 				printf("----------------------------------------\n");
 				std::cout << "Time taken: " << end-start << "s" << std::endl;
 				printf("Search completed!\n");
+				neighbours.clear();
 			}
 		}
 		void global_run()

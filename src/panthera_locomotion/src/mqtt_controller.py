@@ -12,7 +12,8 @@ from zed_interfaces.msg import ObjectsStamped
 class Ds4Controller():
 	def __init__(self):
 		rospy.init_node('Controller')
-
+		self.broker_address = "192.168.1.93"
+		self.client = mqtt.Client("mqtt_server")
 		self.mode = 1 # mode 1:=smooth , mode 0:=reconfig
 
 		# Toggle buttons for roboclaw
@@ -21,8 +22,6 @@ class Ds4Controller():
 		self.vac = Button(-1,1)
 		self.vision = Button(0,1)
 
-		rospy.Subscriber('/cmd_vel', Twist, self.cmd_sub)
-		rospy.Subscriber('/status', st, self.ds4_sub)
 		rospy.Subscriber('/can_encoder', Twist, self.encoder_pos)
 
 		### VISION ###
@@ -103,6 +102,11 @@ class Ds4Controller():
 		self.contract_limit = 0.73
 		self.expand_limit = 0.85
 
+		self.client.on_message = read_twist
+		self.client.connect(broker_address)
+		self.client.loop_start()
+		self.client.subscribe("cmd_vel")
+
 	def human_loc(self, data):
 		if self.vision.data == 1:
 			nearest_human = float('inf')
@@ -137,6 +141,37 @@ class Ds4Controller():
 		self.width = data.angular.z
 		#self.width = data.angular.z
 
+	def read_twist(self, client, userdata, message):
+		msg = message.payload.split(",")
+		self.linear_x = msg[0]
+		self.angular_z = msg[1]
+
+		self.rot_right = msg[2]
+		self.rot_left = msg[3]
+
+		self.vision.value = msg[4]
+		self.vision.change_state()
+
+		self.holo_right = msg[5]
+		self.holo_left = msg[6]
+
+		self.rec_r = msg[7]
+		self.rec_l = msg[8]
+
+		self.d_vx = msg[9]
+		self.d_wz = msg[10]
+		self.decrease = msg[11]
+
+		self.brush.value = msg[12]
+		self.act.value = msg[13]
+		self.vac.value = msg[14]
+		self.brush.change_state()
+		self.act.change_state()
+		self.vac.change_state()
+		
+		self.input_list = [self.linear_x, self.angular_z, self.rot_right, self.rot_left,
+						   self.holo_right, self.holo_left, self.d_vx, self.d_wz, self.decrease, self.rec_r, self.rec_l]
+	'''
 	def cmd_sub(self, data):
 		self.linear_x = data.linear.x
 		self.angular_z = data.angular.z
@@ -170,7 +205,7 @@ class Ds4Controller():
 
 		self.input_list = [self.linear_x, self.angular_z, self.rot_right, self.rot_left,
 						   self.holo_right, self.holo_left, self.d_vx, self.d_wz, self.decrease, self.rec_r, self.rec_l]
-
+	'''
 
 	def change_vx(self):
 		if self.d_vx == 0:
@@ -439,3 +474,4 @@ if __name__ == "__main__":
 	while not rospy.is_shutdown():
 		start.run()
 		rate.sleep()
+	rospy.spin()
