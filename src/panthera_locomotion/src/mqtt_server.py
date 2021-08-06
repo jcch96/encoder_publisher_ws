@@ -12,13 +12,13 @@ def read_twist(client, userdata, message):
 	twist.angular.x = float(twist_str[3])
 	twist.angular.y = float(twist_str[4])
 	twist.angular.z = float(twist_str[5])
-	pub.publish(twist)
+	print(twist_str)
 
 if __name__=="__main__":
 	rospy.init_node("mqtt_server")
 	pub = rospy.Publisher("/panthera_cmd", Twist, queue_size=1)
 
-	broker_address = "192.168.1.93"
+	broker_address = "10.19.51.66"
 	client = mqtt.Client("mqtt_server")
 	client.on_message = read_twist
 	client.connect(broker_address)

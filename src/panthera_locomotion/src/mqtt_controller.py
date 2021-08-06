@@ -13,8 +13,8 @@ from zed_interfaces.msg import ObjectsStamped
 class Ds4Controller():
 	def __init__(self):
 		rospy.init_node('Controller')
-		self.broker_address = "192.168.1.93"
-		self.client = mqtt.Client("mqtt_server")
+		self.broker_address = "10.19.51.66"
+		self.client = mqtt.Client("Controller")
 		self.mode = 1 # mode 1:=smooth , mode 0:=reconfig
 
 		# Toggle buttons for roboclaw
@@ -40,22 +40,22 @@ class Ds4Controller():
 		self.actuators = rospy.Publisher('/actuators_topic', Twist, queue_size=1)
 		self.vacuum = rospy.Publisher('/vacuum_topic', Twist, queue_size=1)
 		###
-		
+		'''
 		rospy.wait_for_service('/lb_steer_status')
 		rospy.wait_for_service('/lf_steer_status')
 		rospy.wait_for_service('/rb_steer_status')
 		rospy.wait_for_service('/rf_steer_status')
-		
+		'''
 		self.lb_status = rospy.ServiceProxy('lb_steer_status', Status)
 		self.lf_status = rospy.ServiceProxy('lf_steer_status', Status)
 		self.rb_status = rospy.ServiceProxy('rb_steer_status', Status)
 		self.rf_status = rospy.ServiceProxy('rf_steer_status', Status)
-		
+		'''
 		rospy.wait_for_service('/lb_reconfig_status')
 		rospy.wait_for_service('/lf_reconfig_status')
 		rospy.wait_for_service('/rb_reconfig_status')
 		rospy.wait_for_service('/rf_reconfig_status')
-		
+		'''
 		self.lb_stat = rospy.ServiceProxy('lb_reconfig_status', Status)
 		self.lf_stat = rospy.ServiceProxy('lf_reconfig_status', Status)
 		self.rb_stat = rospy.ServiceProxy('rb_reconfig_status', Status)
@@ -103,10 +103,12 @@ class Ds4Controller():
 		self.contract_limit = 0.73
 		self.expand_limit = 0.85
 
-		self.client.on_message = read_twist
-		self.client.connect(broker_address)
+		self.client.connect(self.broker_address)
+		self.client.on_message = self.read_twist
 		self.client.loop_start()
 		self.client.subscribe("cmd_vel")
+
+		self.operation = False
 
 	def human_loc(self, data):
 		if self.vision.data == 1:
@@ -142,63 +144,32 @@ class Ds4Controller():
 		self.width = data.angular.z
 		#self.width = data.angular.z
 
-	def read_twist(self, client, userdata, message):
+	def read_twist(self, client, user_data, message):
 		msg = message.payload.split(",")
-		self.linear_x = msg[0]
-		self.angular_z = msg[1]
+		self.linear_x = float(msg[0])
+		self.angular_z = float(msg[1])
 
-		self.rot_right = msg[2]
-		self.rot_left = msg[3]
-
-		self.vision.value = msg[4]
-		self.vision.change_state()
-
-		self.holo_right = msg[5]
-		self.holo_left = msg[6]
-
-		self.rec_r = msg[7]
-		self.rec_l = msg[8]
-
-		self.d_vx = msg[9]
-		self.d_wz = msg[10]
-		self.decrease = msg[11]
-
-		self.brush.value = msg[12]
-		self.act.value = msg[13]
-		self.vac.value = msg[14]
-		self.brush.change_state()
-		self.act.change_state()
-		self.vac.change_state()
-		
-		self.input_list = [self.linear_x, self.angular_z, self.rot_right, self.rot_left,
-						   self.holo_right, self.holo_left, self.d_vx, self.d_wz, self.decrease, self.rec_r, self.rec_l]
-	'''
-	def cmd_sub(self, data):
-		self.linear_x = data.linear.x
-		self.angular_z = data.angular.z
-
-	def ds4_sub(self, data):
-		self.rot_right = data.button_dpad_right
-		self.rot_left = data.button_dpad_left
+		self.rot_right = int(msg[2])
+		self.rot_left = int(msg[3])
 
 		## VISION ##
-		self.vision.value = data.button_dpad_up
+		self.vision.value = int(msg[4])
 		self.vision.change_state()
 		############
-		self.holo_right = data.button_r1
-		self.holo_left = data.button_l1
+		self.holo_right = int(msg[5])
+		self.holo_left = int(msg[6])
 
-		self.rec_r = data.button_r2
-		self.rec_l = data.button_l2
+		self.rec_r = int(msg[7])
+		self.rec_l = int(msg[8])
 
-		self.d_vx = data.button_triangle# and (not data.button_share)
-		self.d_wz = data.button_cross# and (not data.button_share)
-		self.decrease = -data.button_share
+		self.d_vx = int(msg[9])
+		self.d_wz = int(msg[10])
+		self.decrease = int(msg[11])
 
 		### Brushes roboclaw stuff
-		self.brush.value = data.button_options
-		self.act.value = data.button_square
-		self.vac.value = data.button_circle
+		self.brush.value = int(msg[12])
+		self.act.value = int(msg[13])
+		self.vac.value = int(msg[14])
 		self.brush.change_state()
 		self.act.change_state()
 		self.vac.change_state()
@@ -206,7 +177,7 @@ class Ds4Controller():
 
 		self.input_list = [self.linear_x, self.angular_z, self.rot_right, self.rot_left,
 						   self.holo_right, self.holo_left, self.d_vx, self.d_wz, self.decrease, self.rec_r, self.rec_l]
-	'''
+		#print(msg)
 
 	def change_vx(self):
 		if self.d_vx == 0:
@@ -225,30 +196,32 @@ class Ds4Controller():
 			self.wz += (1*(not self.decrease) + self.decrease) * self.step
 		
 	def check(self):
-		req = StatusRequest()
-		req.reconfig = True
-		signal = False
-		rate = rospy.Rate(2)
-		while signal == False and not rospy.is_shutdown():
-			rate.sleep()
-			lb = self.lb_status(req)
-			rb = self.rb_status(req)
-			lf = self.lf_status(req)
-			rf = self.rf_status(req)
-			signal = (lb.status and rb.status and lf.status and rf.status)
-			print([lb.status, rb.status, lf.status, rf.status])
-			print("Status of steering motors:" + str(signal))
+		if self.operation == True:
+			req = StatusRequest()
+			req.reconfig = True
+			signal = False
+			rate = rospy.Rate(2)
+			while signal == False and not rospy.is_shutdown():
+				rate.sleep()
+				lb = self.lb_status(req)
+				rb = self.rb_status(req)
+				lf = self.lf_status(req)
+				rf = self.rf_status(req)
+				signal = (lb.status and rb.status and lf.status and rf.status)
+				print([lb.status, rb.status, lf.status, rf.status])
+				print("Status of steering motors:" + str(signal))
 
 	def reconfig(self, state):
-		req = StatusRequest()
-		req.reconfig = state
-		stat = not state
-		while stat!= state:
-			lb = self.lb_stat(req)
-			lf = self.lf_stat(req)
-			rb = self.rb_stat(req)
-			rf = self.rf_stat(req)
-			stat = (lb.status and rb.status and lf.status and rf.status)
+		if self.operation == True:
+			req = StatusRequest()
+			req.reconfig = state
+			stat = not state
+			while stat!= state:
+				lb = self.lb_stat(req)
+				lf = self.lf_stat(req)
+				rb = self.rb_stat(req)
+				rf = self.rf_stat(req)
+				stat = (lb.status and rb.status and lf.status and rf.status)
 
 	def adjust_wheels(self, vx, wz): # radius in m, direction c(-1) or ccw(1)
 		if wz == 0:
@@ -337,7 +310,7 @@ class Ds4Controller():
 				self.pub.publish(self.twist)
 				self.check()
 			else:
-				#print("Not stopping")
+				print("Not stopping")
 				self.check()
 
 		# wheel speeds for reconfig
@@ -392,12 +365,12 @@ class Ds4Controller():
 				if self.human_dist > self.human_stop:
 					self.pub_once = sum(self.input_list)
 					self.locomotion()
-					self.print_instructions()
+					#self.print_instructions()
 				else:
 					self.e_stop()
 		else:
 			self.pub_once = sum(self.input_list)
-			self.print_instructions()
+			#self.print_instructions()
 			if self.human_dist <= self.human_stop:
 				self.e_stop()
 
@@ -471,8 +444,7 @@ class Button():
 if __name__ == "__main__":
 	start = Ds4Controller()
 	rate = rospy.Rate(10)
-	start.print_instructions()
+	#start.print_instructions()
 	while not rospy.is_shutdown():
 		start.run()
 		rate.sleep()
-	rospy.spin()

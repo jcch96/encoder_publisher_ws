@@ -5,7 +5,12 @@ from geometry_msgs.msg import Twist
 from ds4_driver.msg import Status
 
 class MqttNode():
-	def __init_(self):
+	def __init__(self):
+		rospy.init_node("mqtt_client")
+
+		self.step = 0.01
+		self.vx = 0.12
+		self.wz = 0.08618
 
 		self.linear_x = 0
 		self.angular_z = 0
@@ -28,15 +33,18 @@ class MqttNode():
 		self.brush_value = 0
 		self.act_value = 0
 		self.vac_value = 0
-		self.broker_address = "192.168.1.93"
+		self.broker_address = "10.19.51.66"
 		self.client = mqtt.Client("P1")
 		self.client.connect(self.broker_address)
 		rospy.Subscriber("/cmd_vel", Twist, self.cmd_sub)
 		rospy.Subscriber("/status", Status, self.ds4_sub)
+		self.pub = rospy.Publisher("/panthera_cmd", Twist, queue_size=1)
+		self.tw = Twist()
 
 	def cmd_sub(self, data):
 		self.linear_x = data.linear.x
 		self.angular_z = data.angular.z
+		self.tw = data
 
 	def ds4_sub(self, data):
 		self.rot_right = data.button_dpad_right
@@ -60,17 +68,34 @@ class MqttNode():
 		self.act_value = data.button_square
 		self.vac_value = data.button_circle
 		###
-		rate = rospy.Rate(10)
-		while not rospy.is_shutdown():
-			start.run()
-			rate.sleep()
 
 	def run(self):
-		msg = "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(self.linear_x, self,angular_z, self.rot_right, self.rot_left, self.vision_value,
+		self.change_vx()
+		self.change_wz()
+		msg = "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(self.linear_x, self.angular_z, self.rot_right, self.rot_left, self.vision_value,
 																	self.holo_right, self.holo_left, self.rec_r, self.rec_l, self.d_vx, self.d_wz,
 																	self.decrease, self.brush_value, self.act_value, self.vac_value)
 		self.client.publish("cmd_vel", msg)
+		#print(msg)
 		self.print_instructions()
+
+		#self.pub.publish(data)
+
+	def change_vx(self):
+		if self.d_vx == 0:
+			pass
+		else:
+			while self.d_vx == 1:
+				pass
+			self.vx += (1*(not self.decrease) + self.decrease) * self.step
+
+	def change_wz(self):
+		if self.d_wz == 0:
+			pass
+		else:
+			while self.d_wz == 1:
+				pass
+			self.wz += (1*(not self.decrease) + self.decrease) * self.step
 
 	def print_instructions(self):
 		print('\n')
@@ -87,7 +112,7 @@ class MqttNode():
 		print("[l1] + [up]: Holonomic Left")
 		print("[r2] + [up]/[down]: Right Contract/Expand")
 		print("[l2] + [down]/[up]: Left Contract/Expand" + '\n')
-		print("[up] VISION mode: " + str(self.vision_data) + '\n')
+		print("[up] VISION mode: " + str(self.vision_value) + '\n')
 
 		print("    ADJUST SPEED    ")
 		print("    ------------    ")
@@ -96,18 +121,19 @@ class MqttNode():
 
 		print("    Current Velocity: ")
 		print("    -----------------")
-		print("VX: " + str(self.vx))
-		print("WZ: " + str(self.wz))
-		print("Robot Width: " + str(self.width) + '\n')
+		print("VX: " + str(self.linear_x*self.vx))
+		print("WZ: " + str(self.angular_z*self.wz))
 
 		print("    Cleaning:")
 		print("    ---------")
-		print("[options]: Brushes -> " + str(self.brush_data))
-		print("[square]: Actuators -> " + str(self.act_data))
-		print("[circle]: Vacuum -> " + str(self.vac_data))
+		print("[options]: Brushes -> " + str(self.brush_value))
+		print("[square]: Actuators -> " + str(self.act_value))
+		print("[circle]: Vacuum -> " + str(self.vac_value))
 
 if __name__=="__main__":
-	rospy.init_node("mqtt_client")
 	start = MqttNode()
-
-
+	#start.print_instructions()
+	rate = rospy.Rate(10)
+	while not rospy.is_shutdown():
+		start.run()
+		rate.sleep()
