@@ -33,9 +33,11 @@ class MqttNode():
 		self.brush_value = 0
 		self.act_value = 0
 		self.vac_value = 0
-		self.broker_address = "10.19.51.66"
+
+		self.broker_address = "10.21.146.111" # hostname -I
 		self.client = mqtt.Client("P1")
 		self.client.connect(self.broker_address)
+
 		rospy.Subscriber("/cmd_vel", Twist, self.cmd_sub)
 		rospy.Subscriber("/status", Status, self.ds4_sub)
 		self.pub = rospy.Publisher("/panthera_cmd", Twist, queue_size=1)

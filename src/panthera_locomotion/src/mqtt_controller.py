@@ -2,7 +2,9 @@
 
 import math
 import rospy
-import paho.mqtt.client as mqtt
+
+import paho.mqtt.client as mqtt # 1. sudo apt install mosquitto 2. pip install paho-mqtt
+
 from geometry_msgs.msg import Twist, Point32
 from std_msgs.msg import Empty
 from panthera_locomotion.srv import Status, StatusRequest, StatusResponse
@@ -13,8 +15,11 @@ from zed_interfaces.msg import ObjectsStamped
 class Ds4Controller():
 	def __init__(self):
 		rospy.init_node('Controller')
+		### MQTT ####
 		self.broker_address = "10.19.51.66"
 		self.client = mqtt.Client("Controller")
+		#############
+
 		self.mode = 1 # mode 1:=smooth , mode 0:=reconfig
 
 		# Toggle buttons for roboclaw
@@ -103,10 +108,12 @@ class Ds4Controller():
 		self.contract_limit = 0.73
 		self.expand_limit = 0.85
 
+		### MQTT ###
 		self.client.connect(self.broker_address)
 		self.client.on_message = self.read_twist
 		self.client.loop_start()
 		self.client.subscribe("cmd_vel")
+		#############
 
 		self.operation = False
 
