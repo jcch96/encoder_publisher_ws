@@ -87,7 +87,8 @@ class Robot
 
 		void widthCallback(const geometry_msgs::Twist& msg)
 		{
-			width = (msg.angular.y + msg.angular.z)/2 + 0.3;
+			//width = (msg.angular.y + msg.angular.z)/2 + 0.3; // using 2 wire encoders
+			width = (msg.angular.z) + 0.3; // using 1 wire encoder
 		}
 
 		void mapCallback(const nav_msgs::OccupancyGrid& msg)
@@ -225,7 +226,8 @@ class Robot
 		bool radius_clearing(int index, float centre[2])
 		{
 			int coor[2];
-			clear_radius = 1.1/0.05;
+			clear_radius = length/res; // change to # of cells from centre to corner of robot
+			//clear radius = sqrt(pow(length/2, 2) + pow(width/2, 2))/res 
 			//std::cout << "clear radius: " << clear_radius << std::endl;
 			if (index <= len_x)
 			{

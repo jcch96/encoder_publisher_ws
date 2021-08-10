@@ -54,10 +54,7 @@ public:
 		map_width = msg.info.width;
 		map_height = msg.info.height;
 		map_data = msg.data;
-<<<<<<< HEAD
-=======
 		mp = msg;
->>>>>>> bbee44fac1b52c987887b2486f9294b34644f8ec
 
 		if (init == 0)
 		{
@@ -129,7 +126,6 @@ public:
 		
 		//printf("check2");
 		nav_msgs::OccupancyGrid og;
-<<<<<<< HEAD
 		og.data = max(ult_map, map_data);
 		og.info.height = map_height;
 		og.info.width = map_width;
@@ -138,15 +134,13 @@ public:
 		ult_map.clear();
 		ult_map.resize(map_width*map_height, 0);
 	}
-
+	/**
 	int filter(int dist)
 	{
 		if (dist >= 100)
-=======
 		og.header.frame_id = "velodyne";
 		og.info = mp.info;
 		if (combined == true)
->>>>>>> bbee44fac1b52c987887b2486f9294b34644f8ec
 		{
 			og.data = map_data;
 		}
@@ -162,6 +156,7 @@ public:
 		ult_map.resize(map_width*map_height, 0);
 		//std::cout << og << std::endl;
 	}
+	**/
 
 	void width_callback(const geometry_msgs::Twist& msg)
 	{

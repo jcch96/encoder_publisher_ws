@@ -11,18 +11,16 @@ from trans_class import TransMotor
 if __name__ == "__main__":
 	try:
 		rospy.init_node('lf_trans_motor')
-		lf_motor = TransMotor('lf', 2, 1)
-		#rate = rospy.Rate(1)
+		lf_motor = TransMotor('lf', 2, 1) # init translational motors TransMotor(name, address, sign). sign is for each motor either +1 or -1
 		while not rospy.is_shutdown():
+			# subscribes to both /panthera_cmd & /reconfig
 			if lf_motor.wheel_speed == 0:
+				# if /reconfig publishes 0 speed, read from /panthera_cmd
 				lf_motor.adjust_speed(lf_motor.linear_x, lf_motor.angular_z)
-				#lf_motor.control_speed(lf_motor.linear_x, lf_motor.angular_z)
 			else:
-				#print("lf rpm: " + str(lf_motor.wheel_speed))
+				# if /panthera_cmd publishes 0 speed, read from /reconfig
 				lf_motor.motor.writeSpeed(lf_motor.wheel_speed)
 			lf_motor.pub_wheel_vel()
-			#print("lf speed: " + str(lf_motor.wheel_velocity))
-			#rate.sleep()
 	except rospy.ROSInterruptException:
 		pass
 

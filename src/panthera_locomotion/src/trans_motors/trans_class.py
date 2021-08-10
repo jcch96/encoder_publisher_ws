@@ -10,16 +10,16 @@ import serial.tools.list_ports
 class TransMotor():
 
 	def __init__(self, name, address, sign):
-		#rospy.init_node('rf_trans_motor')
-		rospy.Subscriber('/panthera_cmd', Twist, self.callback)
-		rospy.Subscriber('/reconfig', Twist, self.reconfig)
-		rospy.Subscriber('/can_encoder', Twist, self.encoder_position) # CHANGE THE TOPIC NAME
-		self.wheel_vel_pub = rospy.Publisher('/{}_wheel_vel'.format(name), Float32, queue_size=1)
-		self.tolerance = rospy.get_param('/angle_tolerance')
+		rospy.Subscriber('/panthera_cmd', Twist, self.callback) # get vx and wz commands
+		rospy.Subscriber('/reconfig', Twist, self.reconfig) # get individual wheel speeds
+		rospy.Subscriber('/can_encoder', Twist, self.encoder_position) # get wheel encoder readings
+		self.wheel_vel_pub = rospy.Publisher('/{}_wheel_vel'.format(name), Float32, queue_size=1) # publish wheel velocity
 
 		self.sign = sign
 		self.address = address
 		self.name = name
+
+		## READ USB SERIAL NUMBER
 		p = list(serial.tools.list_ports.grep(rospy.get_param('/{}_sn'.format(name))))
 		self.port = '/dev/' + p[0].name
 		self.orienbus = orienbus.OrienBus(self.port)
@@ -55,10 +55,10 @@ class TransMotor():
 			self.position = data.angular.x
 			self.complement = data.linear.z
 
-		#self.width = data.angular.z
-		self.width = (data.angular.z + data.angular.y)/2
+		#self.width = data.angular.z # 1 wire encoder
+		self.width = (data.angular.z + data.angular.y)/2 # 2 wire encoders
 
-	def reconfig(self, data): ###
+	def reconfig(self, data): # get speed for individual wheels
 		if self.name == 'lb':
 			self.reconfig_speed = data.linear.x
 		elif self.name == 'rb':
@@ -70,10 +70,12 @@ class TransMotor():
 		self.wheel_speed = self.rads_to_rpm(self.reconfig_speed / self.wheel_radius)
 
 	def callback(self, data):
+		# get vx and wz
 		self.linear_x = data.angular.y
 		self.angular_z = data.angular.z
 
 	def motor_lin_vel(self, vx, wz):
+		# converting vx and wz to wheel speed
 		sign = wz / abs(wz)
 		r = vx / wz
 		rot_dir = vx / abs(vx)
@@ -85,14 +87,17 @@ class TransMotor():
 		return speed # check motor direction 
 
 	def rads_to_rpm(self, x):
+		# convert rads to rpm
 		rpm = (x / (2*math.pi)) * 60 * self.gear_ratio
 		return int(-rpm)
 
 	def rpm_to_rads(self, x):
+		# convert rpm to rads
 		rads = (x/60) * 2 * math.pi / self.gear_ratio
 		return (-rads)
 
 	def adjust_speed(self, vx, wz):
+		# control wheel speed of robot
 		speed = 0
 		#if run_mode == True:
 		if vx == 0:

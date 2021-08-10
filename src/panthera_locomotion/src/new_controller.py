@@ -15,7 +15,7 @@ class Ds4Controller():
 
 		self.mode = 1 # mode 1:=smooth , mode 0:=reconfig
 
-		# Toggle buttons for roboclaw
+		# Toggle buttons for roboclaw & vision
 		self.brush = Button(0,0.01)
 		self.act = Button(-1,1)
 		self.vac = Button(-1,1)
@@ -274,14 +274,14 @@ class Ds4Controller():
 		recon_r = -self.rec_r * 90
 		recon_l = self.rec_l * 90
 		recon_move = (self.rec_r or self.rec_l) * f
-		lb,rb,lf,rf = self.adjust_wheels(f, s)
+		lb,rb,lf,rf = self.adjust_wheels(f, s) # desired steering angles
 		self.twist.linear.x = self.filter_input(lb - h_r - h_l + recon_l)
 		self.twist.linear.y = self.filter_input(rb - h_r - h_l + recon_r)
 		self.twist.linear.z = self.filter_input(lf - h_r - h_l + recon_l)
 		self.twist.angular.x = self.filter_input(rf - h_r - h_l + recon_r)
 		self.pub.publish(self.twist)
 
-		# check wheels algined
+		# check wheels alginedTrue
 		if self.mode != 0:
 			if prev_mode == 0:
 				self.twist.angular.y = 0

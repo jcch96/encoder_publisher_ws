@@ -505,7 +505,7 @@ class Robot
 		// robot width subscriber
 		void widthCallback(const geometry_msgs::Twist& msg)
 		{
-			ws_width = (msg.angular.y + msg.angular.z)/2;
+			ws_width = (msg.angular.y + msg.angular.z)/2; // 2 encoder values
 		}
 
 		// occupancy grid subscriber

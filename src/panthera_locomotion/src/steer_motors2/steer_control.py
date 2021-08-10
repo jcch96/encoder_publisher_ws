@@ -14,21 +14,26 @@ class SteerMotor():
 		self.name = name
 		self.address = address
 		# Specific motor parameters
-		rospy.Subscriber('/can_encoder', Twist, self.encoder_pos)
-		rospy.Subscriber('/panthera_cmd', Twist, self.desired_pos)
-		service = rospy.Service('{}_reconfig_status'.format(name), Status, self.callback)
-		serv = rospy.Service('{}_steer_status'.format(name), Status, self.steer_stat)
+		rospy.Subscriber('/can_encoder', Twist, self.encoder_pos) # subscribe to the wheel encoder positions
+		rospy.Subscriber('/panthera_cmd', Twist, self.desired_pos) # subscribe to the desired wheel angles and speed
+		service = rospy.Service('{}_reconfig_status'.format(name), Status, self.callback) # determine if robot is in reconfig mode (ie wheels can steer independently of each other)
+		serv = rospy.Service('{}_steer_status'.format(name), Status, self.steer_stat) # service server to return bool if wheels have reached desired angle
 
+		# Parameters in param file "steer_params.yaml"
 		self.kp = rospy.get_param('{}_pid'.format(self.name))['kp']
 		self.ki = rospy.get_param('{}_pid'.format(self.name))['ki']
 		self.kd = rospy.get_param('{}_pid'.format(self.name))['kd']
-		self.MAX_SPEED = rospy.get_param('/{}_max_speed'.format(self.name))
-		self.sn = rospy.get_param('/{}_serial_number'.format(self.name))
-		self.tolerance = rospy.get_param('/angle_tolerance')
+		self.MAX_SPEED = rospy.get_param('/{}_max_speed'.format(self.name)) # max speed the steering motor should rotate
+		self.sn = rospy.get_param('/{}_serial_number'.format(self.name)) # serial number of rs485
+		self.tolerance = rospy.get_param('/angle_tolerance') # acceptable angle diff between desired position and current position
+
+		# Special case for lb wheel due to different gear ratio
 		if self.name == "lb":
 			self.tolerance+=0.5
-		self.integral_reset = rospy.get_param('/{}_pid'.format(self.name))['ir']
 
+		self.integral_reset = rospy.get_param('/{}_pid'.format(self.name))['ir'] # max integral term before resetting
+		
+		## READ USB SERIAL NUMBER ##
 		p = list(serial.tools.list_ports.grep(self.sn))
 		self.port = '/dev/' + p[0].name
 		self.orienbus = orienbus.OrienBus(self.port)
@@ -49,15 +54,16 @@ class SteerMotor():
 		self.motor_speed = 0
 
 		self.control_activation = 3
-		self.inner_max_speed = 800
+		self.inner_max_speed = 800 # speed of inner wheel when turning. outer wheel takes reference of this speed
 
-		self.reconfig = True
+		self.reconfig = True # reconfig mode
 
 	def callback(self, req):
-		self.reconfig = req.reconfig
+		self.reconfig = req.reconfig # set reconfig mode and returns motor speed
 		return StatusResponse(status=self.reconfig, speed=self.motor_speed)
 
 	def steer_stat(self, req):
+		# returns bool if wheel has reached desired angle
 		if req.reconfig == True:
 			if abs(self.current_error) <= self.tolerance:
 				return StatusResponse(status=True, speed=self.motor_speed)
@@ -67,6 +73,7 @@ class SteerMotor():
 			pass
 
 	def encoder_pos(self, data):
+		# current encoder readings
 		if self.name == 'lb':
 			self.position = data.linear.x
 			self.complement = data.linear.y
@@ -81,6 +88,8 @@ class SteerMotor():
 			self.complement = data.linear.z
 
 	def desired_pos(self, data):
+		# target angles & set complements
+		# eg: complement of lf is rf, complement of rb is lb
 		if self.name == 'lb':
 			self.target = data.linear.x
 			self.complement_target = data.linear.y
@@ -97,6 +106,7 @@ class SteerMotor():
 			self.target = data.angular.x
 			self.complement_target = data.linear.z
 
+	#### PID stuff ####
 	def proportional(self, desired, actual): #error - current angle
 	    prop =  self.kp * (desired - actual)
 	    return prop
@@ -115,16 +125,21 @@ class SteerMotor():
 	    integral =  self.ki * accu * dt
 	    #print("Ki: " +str(integral))
 	    return integral
+	######################
+
 
 	def adjust_max_speed(self):
 		if abs(self.complement_error) == 0:
 			self.MAX_SPEED = 0
 		else:
 			if self.name == "lf":
+				# check if wheel is inner or outer wheel of a certain ICR
 				if self.position >= 0:
 					self.MAX_SPEED = self.inner_max_speed
+				# case if wheel is inner wheel but angle is a bit off 
 				elif abs(self.position) < self.tolerance and self.position < 0:
 					self.MAX_SPEED = self.inner_max_speed
+				# case if wheel is outer of ICR
 				else:
 					self.MAX_SPEED = abs(self.current_error) * self.inner_max_speed / abs(self.complement_error)
 
@@ -136,6 +151,7 @@ class SteerMotor():
 				else:
 					self.MAX_SPEED = abs(self.current_error) * self.inner_max_speed / abs(self.complement_error)
 
+			# LB has different gear ratio so special case
 			elif self.name == "lb":
 				if self.position <= 0:
 					self.MAX_SPEED = self.inner_max_speed/2
@@ -154,6 +170,7 @@ class SteerMotor():
 			
 
 	def adjust_speed(self, dt):
+		# PID calculation
 		self.current_error = self.target - self.position
 		self.complement_error = self.complement_target - self.complement
 		self.accu_error += self.current_error
@@ -163,13 +180,15 @@ class SteerMotor():
 		speed = p + i + d
 		speed =  -int(speed)
 
-		# Steering mode
+		# Steering mode false: ackerman steering
 		if self.reconfig == False:
-			self.adjust_max_speed()
+			self.adjust_max_speed() # set max speed for wheel
 			if abs(self.current_error) >= self.tolerance:
+				# motor uses PID control if within control_activation, if not, runs at max speed specified
 				if abs(self.current_error) <= self.control_activation:
 					self.motor_speed = speed
 					self.motor.writeSpeed(speed)
+				# runs at max speed outside control_activation
 				else:
 					if speed < 0:
 						self.motor_speed = -self.MAX_SPEED
@@ -192,6 +211,8 @@ class SteerMotor():
 				self.MAX_SPEED = 300
 			else:
 				self.MAX_SPEED = 600
+
+			# Stop steering motors if within angle tolerance
 			if abs(self.current_error) >= self.tolerance:
 				if abs(speed) < abs(self.MAX_SPEED):
 					self.motor_speed = speed
@@ -212,6 +233,7 @@ class SteerMotor():
 
 		self.prev_error = self.current_error
 
+		# Integral reset
 		if abs(i) >= self.integral_reset:
 			self.accu_error = 0
 
